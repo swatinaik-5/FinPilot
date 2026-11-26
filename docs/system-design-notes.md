@@ -44,10 +44,16 @@ Each note follows the same shape: **Definition → Why it matters → FinPilot e
 
 **"Why can't you use one database transaction across two microservices?"**
 
+**My answer (about 60 seconds when spoken):**
+
 In a microservices system each service owns its own database, so a normal ACID transaction cannot span two services: there is no single database to hold the transaction open across both. In FinPilot, a transfer between customers touches balances in account-service and a transfer record in transaction-service. If I debit one and then the other call fails, money could be taken from one account and never credited to the other, and there is no automatic rollback across the two databases.
 
 The usual alternatives are two-phase commit, which is slow, fragile and tightly couples the services, or the Saga pattern. With a Saga, the transfer becomes a sequence of local transactions, and if a step fails, I run compensating actions, such as reversing the debit, to undo the earlier steps. I would pair that with an idempotency key on every transfer request so retries never apply twice, and with clear statuses like PENDING, COMPLETED and FAILED so the system always knows where a transfer stands. The cost is eventual consistency and more code, which is why I would only choose this design when the services genuinely need to be separate. I will build this in Week 4.
 
 ---
 
+## Self-check
 
+- [ ] I can explain each note aloud in under a minute without looking
+- [ ] Every note has a FinPilot example, not just a definition
+- [ ] Committed and pushed to GitHub
